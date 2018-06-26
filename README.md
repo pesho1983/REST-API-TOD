@@ -1,1 +1,1 @@
-Ко става ИЦО?
+Hola, como estais, amigos?
