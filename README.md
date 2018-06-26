@@ -1,1 +1,1 @@
-Hola, que pasa?
+Hola, como estais, amigos?
