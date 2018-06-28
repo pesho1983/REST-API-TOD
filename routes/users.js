@@ -31,11 +31,11 @@ exports.save = function(req,res){
           if (err){
             console.log(err.code + '\n' +  err.sqlMessage);
             res.status(400).json({
-              message: err
+              message: err.sqlMessage
             });}
+
           else{
-            var query = connection.query('SELECT user_id FROM users WHERE username = ?',input.username,function(err,user_id)
-            {
+            var query = connection.query('SELECT user_id FROM users WHERE username = ?',input.username,function(err,user_id){
               res.status(200).json(user_id[0]);
             });
           };
