@@ -4,3 +4,4 @@ node_modules/
 # PERSONAL
 *.py
 *.pyc
+test.js

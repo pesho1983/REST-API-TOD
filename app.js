@@ -32,14 +32,12 @@ app.use(
 
 
 app.get('/users', users.list);
-app.post('/users', users.save);
+// app.post('/users', users.save);
+app.post('/users', users.newSave);
 app.get('/lists', lists.list);
 app.post('/lists', lists.save);
 app.get('/tasks', tasks.list);
 app.post('/tasks', tasks.save);
 
-<<<<<<< HEAD
 
 module.exports = app;
-=======
->>>>>>> origin/master
