@@ -62,10 +62,12 @@ exports.newSave = function(req,res){
       surname     : input.surname,
       username    : input.username,
       mail        : input.mail,
-      password    : input.password
+      password    : input.password,
+      is_admin    : 0
   };
 
     req.getConnection(function(err,connection){
+      console.log(data_input)
       if(user !== null && pass !== null){
         //We have a user and pass
         var query = connection.query("SELECT is_active, is_admin FROM users WHERE username = ? AND password = ?;",[user, pass],function(err,data){
@@ -79,20 +81,15 @@ exports.newSave = function(req,res){
               message: "Wrong username or password!"
             })
           }
-          else if(!data[0].is_admin && !data[0].is_active){
+          if(!data[0].is_admin || !data[0].is_active){
               res.status(401).json({
                 message: "No permissions!"
               })
           }
-          console.log(input.is_admin);
           if(data[0].is_admin && data[0].is_active){
-            data_input.is_admin = input.is_admin;
-            }
-          })
-          console.log(data_input.is_admin);
-        };
-
-      var query = connection.query("INSERT INTO users set ? ",data_input, function(err, rows)
+            data_input.is_admin = input.is_admin
+          } 
+      var query = connection.query("INSERT INTO users set ?;", data_input, function(err, rows)
       {
         if (err){
           console.log(err.code + '\n' +  err.sqlMessage);
@@ -101,10 +98,13 @@ exports.newSave = function(req,res){
           });
         }
         else{
+          console.log(query.sql);
           res.status(200).json({
           message : "OK"
           });
         }
-      });
-    })
+      })
+    });
+    }
+  });
 };
