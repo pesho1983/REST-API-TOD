@@ -49,7 +49,7 @@ exports.newSave = function(req, res) {
     var creds = Buffer.from(auth, 'base64').toString("utf-8");
     var user = creds.split(":")[0];
     var pass = creds.split(":")[1];
-    console.log(`Auth header data: ${user} ${pass}`);
+    console.log(`\nAuth header data: ${user} ${pass}\n`);
   }
 
   var input = JSON.parse(JSON.stringify(req.body));
@@ -86,20 +86,20 @@ exports.newSave = function(req, res) {
         if (data[0].is_admin && data[0].is_active) {
           data_input.is_admin = input.is_admin
         }
-        var query = connection.query("INSERT INTO users set ?;", data_input, function(err, rows) {
-          if (err) {
-            console.log(err.code + '\n' + err.sqlMessage);
-            res.status(400).json({
-              message: err.sqlMessage
-            });
-          } else {
-            console.log(query.sql);
-            res.status(200).json({
-              message: "OK"
-            });
-          }
-        })
       });
     }
+    var query = connection.query("INSERT INTO users set ?;", data_input, function(err, rows) {
+      if (err) {
+        console.log(err.code + '\n' + err.sqlMessage);
+        res.status(400).json({
+          message: err.sqlMessage
+        });
+      } else {
+        console.log(query.sql);
+        res.status(200).json({
+          id: rows.insertId
+        });
+      }
+    })
   });
 };
