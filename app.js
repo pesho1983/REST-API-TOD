@@ -25,8 +25,7 @@ app.use(
         password : 'password01',
         port : 3306, //port mysql
         database:'mydb'
-
-    },'single') //or single
+    },'single')
 );
 
 
