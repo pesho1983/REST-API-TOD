@@ -1,4 +1,4 @@
-exports.list = function(req, res) {
+exports.list = function(req, res){
 
   req.getConnection(function(err, connection) {
     var query = connection.query('SELECT * FROM lists', function(err, rows) {
