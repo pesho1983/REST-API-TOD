@@ -25,19 +25,14 @@ app.use(
         password : 'password01',
         port : 3306, //port mysql
         database:'mydb'
-
-    },'single') //or single
+    },'single')
 );
 
-
-
 app.get('/users', users.list);
-// app.post('/users', users.save);
-app.post('/users', users.newSave);
+app.post('/users', users.save);
 app.get('/lists', lists.list);
 app.post('/lists', lists.save);
 app.get('/tasks', tasks.list);
 app.post('/tasks', tasks.save);
-
 
 module.exports = app;
