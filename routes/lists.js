@@ -111,11 +111,13 @@ exports.list = function(req, res) {
             message: "Account disabled."
           })
         } else {
+          var qSelection = " list_id, title"
           query_end = data[0].user_id + ' AND list_is_active = 1'
           if (data[0].is_admin && typeof req.query.user_id !== 'undefined') {
             query_end = req.query.user_id;
+            qSelection += ", list_is_active"
           }
-          qstr = "SELECT list_id, title FROM lists WHERE owner_user_id = " + query_end + ";"
+          qstr = "SELECT" + qSelection + " FROM lists WHERE owner_user_id = " + query_end + ";"
           req.getConnection(function(err, connection) {
             var query = connection.query(qstr, function(err, rows) {
               console.log(`QUERY is: ${qstr}`);
