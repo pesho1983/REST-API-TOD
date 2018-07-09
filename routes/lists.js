@@ -51,12 +51,12 @@ exports.save = function(req, res){
               message: "Bad request."
             })
           }
-          if (data < 1) {
+          else if (data < 1) {
             res.status(404).json({
               message: "Wrong username or password."
             })
           }
-          if (!data[0].is_active) {
+          else if (!data[0].is_active) {
             res.status(401).json({
               message: "Account disabled."
             })
