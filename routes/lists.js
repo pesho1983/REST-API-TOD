@@ -92,7 +92,7 @@ exports.list = function(req, res) {
     userAuth = true;
     console.log(`\nAuth header data: ${user} ${pass}\n`);
   }
-  var searched_user = 0;
+  var query_end = 0;
   if (userAuth) {
     req.getConnection(function(err, connection) {
       //We have a user and pass from authorization header
@@ -111,11 +111,11 @@ exports.list = function(req, res) {
             message: "Account disabled."
           })
         } else {
-          searched_user = data[0].user_id;
+          query_end = data[0].user_id + ' AND list_is_active = 1'
           if (data[0].is_admin && typeof req.query.user_id !== 'undefined') {
-            searched_user = req.query.user_id;
+            query_end = req.query.user_id;
           }
-          qstr = "SELECT list_id, title FROM lists WHERE owner_user_id = " + searched_user + ";"
+          qstr = "SELECT list_id, title FROM lists WHERE owner_user_id = " + query_end + ";"
           req.getConnection(function(err, connection) {
             var query = connection.query(qstr, function(err, rows) {
               console.log(`QUERY is: ${qstr}`);
