@@ -13,13 +13,13 @@ exports.save = function(req, res) {
   var input = JSON.parse(JSON.stringify(req.body));
 
   var data_input = {
-    title: input.title,
-    description: input.description,
+    list_title: input.list_title,
+    list_description: input.list_description,
     owner_user_id: 0
   };
 
   var validationError = false;
-  if (input.title.length < 1) {
+  if (input.list_title.length < 1) {
     validationError = true;
   }
 
@@ -92,7 +92,7 @@ exports.list = function(req, res) {
     userAuth = true;
     console.log(`\nAuth header data: ${user} ${pass}\n`);
   }
-  var query_end = 0;
+  var queryWhereParams = 0;
   if (userAuth) {
     req.getConnection(function(err, connection) {
       //We have a user and pass from authorization header
@@ -111,13 +111,13 @@ exports.list = function(req, res) {
             message: "Account disabled."
           })
         } else {
-          var qSelection = " list_id, title"
-          query_end = data[0].user_id + ' AND list_is_active = 1'
+          var querySelectParams = " list_id, list_title"
+          queryWhereParams = data[0].user_id + ' AND list_is_active = 1'
           if (data[0].is_admin && typeof req.query.user_id !== 'undefined') {
-            query_end = req.query.user_id;
-            qSelection += ", list_is_active"
+            queryWhereParams = req.query.user_id;
+            querySelectParams += ", list_is_active"
           }
-          qstr = "SELECT" + qSelection + " FROM lists WHERE owner_user_id = " + query_end + ";"
+          qstr = "SELECT" + querySelectParams + " FROM lists WHERE list_owner_user_id = " + queryWhereParams + ";"
           req.getConnection(function(err, connection) {
             var query = connection.query(qstr, function(err, rows) {
               console.log(`QUERY is: ${qstr}`);
