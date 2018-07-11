@@ -15,7 +15,7 @@ exports.save = function(req, res) {
   var data_input = {
     list_title: input.list_title,
     list_description: input.list_description,
-    owner_user_id: 0
+    list_owner_user_id: 0
   };
 
   var validationError = false;
@@ -46,7 +46,7 @@ exports.save = function(req, res) {
               message: "Account disabled."
             })
           } else {
-            data_input.owner_user_id = data[0].user_id;
+            data_input.list_owner_user_id = data[0].user_id;
             console.log(data_input);
             var qstr = "INSERT INTO lists set ?;"
             var query = connection.query(qstr, data_input, function(err, rows) {
