@@ -4,7 +4,6 @@ exports.list = function(req, res) {
     var query = connection.query('SELECT * FROM users', function(err, rows) {
       if (err)
         console.log("Error Selecting : %s ", err);
-
       res.send(rows);
     });
   });
@@ -14,40 +13,39 @@ exports.save = function(req, res) {
   var userAuth = false;
 
   if (req.headers.authorization) {
-      var auth = req.headers.authorization.split(" ")[1];
-      var creds = Buffer.from(auth, 'base64').toString("utf-8");
-      var user = creds.split(":")[0];
-      var pass = creds.split(":")[1];
-      userAuth = true;
-      console.log(`\nAuth header data: ${user} ${pass}\n`);
-    }
+    var auth = req.headers.authorization.split(" ")[1];
+    var creds = Buffer.from(auth, 'base64').toString("utf-8");
+    var user = creds.split(":")[0];
+    var pass = creds.split(":")[1];
+    userAuth = true;
+    console.log(`\nAuth header data: ${user} ${pass}\n`);
+  }
 
   var input = JSON.parse(JSON.stringify(req.body));
 
   var data_input = {
-      first_name: input.first_name,
-      surname: input.surname,
-      username: input.username,
-      mail: input.mail,
-      password: input.password,
-      is_admin: 0
-    };
+    first_name: input.first_name,
+    surname: input.surname,
+    username: input.username,
+    mail: input.mail,
+    password: input.password,
+    is_admin: 0
+  };
 
   var validationError = false;
-  if(input.username.length < 3 || input.username.length > 12){
+  if (input.username.length < 3 || input.username.length > 12) {
     validationError = true;
   }
-  if(input.password.length < 8 || input.password.length > 24){
+  if (input.password.length < 8 || input.password.length > 24) {
     validationError = true;
   }
   // console.log(`Validation error: ${validationError}`);
 
-  if(validationError){
+  if (validationError) {
     res.status(409).json({
       message: "Invalid data."
     })
-  }
-  else{
+  } else {
     if (userAuth) {
       req.getConnection(function(err, connection) {
         //We have a user and pass from authorization header
@@ -57,13 +55,11 @@ exports.save = function(req, res) {
             res.status(400).json({
               message: "Bad request."
             })
-          }
-          else if (data < 1) {
+          } else if (data < 1) {
             res.status(404).json({
               message: "Wrong username or password."
             })
-          }
-          else if (!data[0].is_admin || !data[0].is_active) {
+          } else if (!data[0].is_admin || !data[0].is_active) {
             res.status(401).json({
               message: "No permissions!"
             })
@@ -77,16 +73,15 @@ exports.save = function(req, res) {
                   message: err.sqlMessage
                 });
               } else {
-                  res.status(200).json({
-                    id: rows.insertId
-                  });
-                }
+                res.status(200).json({
+                  id: rows.insertId
+                });
+              }
             })
           }
         })
       });
-    }
-    else{
+    } else {
       req.getConnection(function(err, connection) {
         var qstr = "INSERT INTO users set ?;"
         var query = connection.query(qstr, data_input, function(err, rows) {
@@ -95,10 +90,10 @@ exports.save = function(req, res) {
               message: err.sqlMessage
             });
           } else {
-              res.status(200).json({
-                id: rows.insertId
-              });
-            }
+            res.status(200).json({
+              id: rows.insertId
+            });
+          }
         })
       });
     }
