@@ -15,7 +15,7 @@ exports.save = function(req, res) {
   var data_input = {
     list_title: input.list_title,
     list_description: input.list_description,
-    owner_user_id: 0
+    list_owner_user_id: 0
   };
 
   var validationError = false;
@@ -46,7 +46,7 @@ exports.save = function(req, res) {
               message: "Account disabled."
             })
           } else {
-            data_input.owner_user_id = data[0].user_id;
+            data_input.list_owner_user_id = data[0].user_id;
             console.log(data_input);
             var qstr = "INSERT INTO lists set ?;"
             var query = connection.query(qstr, data_input, function(err, rows) {
@@ -113,17 +113,20 @@ exports.list = function(req, res) {
         } else {
           var querySelectParams = " list_id, list_title"
           queryWhereParams = data[0].user_id + ' AND list_is_active = 1'
-          if (data[0].is_admin && typeof req.query.user_id !== 'undefined') {
-            queryWhereParams = req.query.user_id;
+          // if (data[0].is_admin && typeof req.query.user_id !== 'undefined') {
+          //   queryWhereParams = req.query.user_id;
+          //   querySelectParams += ", list_is_active"
+          // }
+          if (data[0].is_admin){
             querySelectParams += ", list_is_active"
           }
           qstr = "SELECT" + querySelectParams + " FROM lists WHERE list_owner_user_id = " + queryWhereParams + ";"
           req.getConnection(function(err, connection) {
             var query = connection.query(qstr, function(err, rows) {
               console.log(`QUERY is: ${qstr}`);
-              if (err){
+              if (err) {
                 res.status(400).json({
-                message: err.sqlMessage
+                  message: err.sqlMessage
                 })
               }
               res.send(rows);
@@ -131,7 +134,7 @@ exports.list = function(req, res) {
           });
         };
       });
-    });
+    })
   } else {
     res.status(401).json({
       message: "Authorization required."
