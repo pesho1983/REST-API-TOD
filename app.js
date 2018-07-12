@@ -20,7 +20,7 @@ app.use(
 
     connection(mysql,{
 
-        host: '192.168.10.254', //'localhost',
+        host: '192.168.10.254', //'localhost', 
         user: 'dbuser',
         password : 'password01',
         port : 3306, //port mysql
@@ -34,5 +34,6 @@ app.get('/users', users.list);
 app.post('/users', users.save);
 app.get('/lists', lists.list);
 app.post('/lists', lists.save);
+app.put('/lists/:list_id', lists.update);
 app.get('/tasks', tasks.list);
 //app.post('/tasks', tasks.save);
