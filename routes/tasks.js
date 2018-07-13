@@ -57,6 +57,20 @@ exports.save = function(req, res) {
     task_status: input.task_status,
     task_in_list: input.task_in_list
   };
+  // console.log(data_input)
+  var dict = {};
+  // console.log(input);
+
+  for (var key in input) {
+    console.log(key);
+    if (key === "task_title" || key === "task_desc" || key === "task_status" || key === "task_in_list") {
+      // console.log(input[key]);
+      dict.key = input[key];
+    }
+  }
+
+  console.log(dict)
+
 
   var validationError = false;
   if (input.task_title.length < 1 || input.task_in_list.length < 1) {
@@ -88,28 +102,35 @@ exports.save = function(req, res) {
           } else {
             console.log(data[0].user_id);
             var qstr = "SELECT * FROM lists WHERE list_owner_user_id = ? AND list_id = ?;";
-            var query = connection.query(qstr, [data[0].user_id, input.task_in_list], function(err, res) {
-              if (res[0].list_is_active) {
+            var query = connection.query(qstr, [data[0].user_id, input.task_in_list], function(err, rows) {
+              if (rows[0].list_is_active) {
                 userListExists = true;
+                console.log(`INSERT INTO task......`);
                 var qstr = "INSERT INTO tasks SET ?;"
                 var query2 = connection.query(qstr, data_input, function(err, rows) {
-                  res.status(200).json({
-                    id: rows.insertId
-                  });
+                  if (err) {
+                    res.status(400).json({
+                      message: err.sqlMessage
+                    });
+                  } else {
+                    res.status(200).json({
+                      id: rows.insertId
+                    });
+                  }
                 });
               } else {
-                res.status(400).json({
-                  message: "List not found"
-                });
+                res.status(404).json({
+                  message: "List does not exist."
+                })
               }
-            });
+            })
           }
-        })
-      });
+        });
+      })
     } else {
       res.status(401).json({
         message: "Authorization required."
       })
-    }
+    };
   };
 };
