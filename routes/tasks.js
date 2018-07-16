@@ -57,13 +57,17 @@ exports.save = function(req, res) {
     task_in_list: input.task_in_list
   };
 
+  var validationError = false;
+  var t_statuses = ['Not Started', 'In Progress', 'Finished'];
   for (var key in data_input) {
     if (typeof data_input[key] === `undefined`){
       delete data_input[key];
     }
+    if (key === "task_status" ){
+      validationError = !t_statuses.includes(data_input[key])
+    }
   }
 
-  var validationError = false;
   if (input.task_title.length < 1 || input.task_in_list.length < 1) {
     validationError = true;
   }
