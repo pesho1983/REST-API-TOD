@@ -122,6 +122,7 @@ exports.list = function(req, res) {
           }
           if (data[0].is_admin && typeof req.query.user_id === 'undefined') {
             querySelectParams += ", list_is_active";
+            queryWhereParams = data[0].user_id
           }
           qstr =
             "SELECT" +
