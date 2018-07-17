@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 var users = require('./routes/users');
 var lists = require('./routes/lists');
 var tasks = require('./routes/tasks');
+var listAll = require('./routes/list-all');
 
 // app.use((req, res, next) => {
 //     res.status(200).json({
@@ -29,7 +30,6 @@ app.use(
 );
 
 
-
 app.get('/users', users.list);
 app.post('/users', users.save);
 app.get('/lists', lists.list);
@@ -37,3 +37,5 @@ app.post('/lists', lists.save);
 app.put('/lists/:list_id', lists.update);
 app.get('/tasks', tasks.list);
 app.post('/tasks', tasks.save);
+app.get('/list-all-lists', listAll.listAll);
+
