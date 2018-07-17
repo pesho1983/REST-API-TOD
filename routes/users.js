@@ -4,6 +4,7 @@ exports.list = function(req, res) {
     var query = connection.query('SELECT * FROM users', function(err, rows) {
       if (err)
         console.log("Error Selecting : %s ", err);
+        res.send(err);
       res.send(rows);
     });
   });
@@ -20,6 +21,7 @@ exports.save = function(req, res) {
     userAuth = true;
     console.log(`\nAuth header data: ${user} ${pass}\n`);
   }
+  // console.log(req.headers);
 
   var input = JSON.parse(JSON.stringify(req.body));
 
@@ -31,6 +33,7 @@ exports.save = function(req, res) {
     password: input.password,
     is_admin: 0
   };
+  console.log(req.body);
 
   var validationError = false;
   if (input.username.length < 3 || input.username.length > 12) {

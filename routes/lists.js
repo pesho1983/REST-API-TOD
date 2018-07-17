@@ -116,11 +116,11 @@ exports.list = function(req, res) {
         } else {
           var querySelectParams = " list_id, list_title";
           queryWhereParams = data[0].user_id + " AND list_is_active = 1";
-          // if (data[0].is_admin && typeof req.query.user_id !== 'undefined') {
-          //   queryWhereParams = req.query.user_id;
-          //   querySelectParams += ", list_is_active"
-          // }
-          if (data[0].is_admin) {
+          if (data[0].is_admin && typeof req.query.user_id !== 'undefined') {
+            queryWhereParams = req.query.user_id;
+            querySelectParams += ", list_is_active"
+          }
+          if (data[0].is_admin && typeof req.query.user_id === 'undefined') {
             querySelectParams += ", list_is_active";
           }
           qstr =
