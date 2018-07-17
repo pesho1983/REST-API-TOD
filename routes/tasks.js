@@ -67,7 +67,7 @@ exports.save = function(req, res) {
       validationError = !t_statuses.includes(data_input[key])
     }
   }
-
+  console.log(data_input)
   if (input.task_title.length < 1 || input.task_in_list.length < 1) {
     validationError = true;
   }
