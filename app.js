@@ -32,6 +32,7 @@ app.use(
 
 app.get('/users', users.list);
 app.post('/users', users.save);
+app.put('/users', users.update);
 app.get('/lists', lists.list);
 app.post('/lists', lists.save);
 app.put('/lists/:list_id', lists.update);
