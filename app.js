@@ -7,6 +7,7 @@ var users = require('./routes/users');
 var lists = require('./routes/lists');
 var tasks = require('./routes/tasks');
 var listAll = require('./routes/list-all');
+var deleteList = require('./routes/deleteList');
 
 // app.use((req, res, next) => {
 //     res.status(200).json({
@@ -26,7 +27,7 @@ app.use(
         password : 'password01',
         port : 3306, //port mysql
         database:'mydb'
-    },'single')
+    },'request')
 );
 
 
@@ -38,4 +39,5 @@ app.put('/lists/:list_id', lists.update);
 app.get('/tasks', tasks.list);
 app.post('/tasks', tasks.save);
 app.get('/list-all-lists', listAll.listAll);
+app.delete('/lists', deleteList.delete);
 
