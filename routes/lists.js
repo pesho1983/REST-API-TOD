@@ -167,16 +167,19 @@ exports.update = function(req, res) {
 
   var data_input = {
     list_title: input.list_title,
-    list_description: input.list_description,
+    list_description: input.list_description
+  };
+
+  var data_remove_share = {
     remove_task_idtask_id: input.remove_task_id,
     shared_with_user_id: input.shared_with_user_id
   };
 
-  if (input.list_title == undefined) {
-    res.status(409).json({
-      message: "Invalid data."
-    });
-  } else {
+  for (var key in data_input) {
+    if (typeof data_input[key] === `undefined`){
+      delete data_input[key];
+    }
+  }
     if (userAuth) {
       req.getConnection(function(err, connection) {
         //We have a user and pass from authorization header
@@ -196,35 +199,17 @@ exports.update = function(req, res) {
             var originalUrl = req.originalUrl;
             var list_id = originalUrl.split("/");
             console.log("Checkpoint before SQL.");
-            var qstr =
-              "UPDATE lists SET list_title =? , list_description =? WHERE list_id = ? and list_owner_user_id = ?;";
-            console.log("Checkpoint after SQL.");
-            var query = connection.query(
-              qstr, [
-                input.list_title,
-                input.list_description,
-                list_id[2],
-                data[0].user_id
-              ],
-              function(err, rows) {
-                console.log(data[0].user_id);
+            var qstr = "UPDATE lists SET ? WHERE list_id = ? and list_owner_user_id = ?;";
+            var query = connection.query(qstr, [data_input, list_id[2], data[0].user_id], function(err, rows) {
                 var remove_sql_task =
-                  "UPDATE tasks SET task_is_active = ?, task_in_list = ? WHERE task_id = ? AND task_in_list = (SELECT list_id FROM lists WHERE list_owner_user_id = ? and list_id = ?)";
-                var query = connection.query(
-                  remove_sql_task, [0, , input.remove_task_id, data[0].user_id, list_id[2]],
-                  function(err, rows) {
-                    var select_share =
-                      "SELECT list_id FROM lists where list_id=? and list_owner_user_id=?;";
-                    var query = connection.query(
-                      select_share, [list_id[2], data[0].user_id],
-                      function(err, rows) {
+                "UPDATE tasks SET task_is_active = ?, task_in_list = ? WHERE task_id = ? AND task_in_list = (SELECT list_id FROM lists WHERE list_owner_user_id = ? and list_id = ?)";
+                var query = connection.query(remove_sql_task, [0, , input.remove_task_id, data[0].user_id, list_id[2]], function(err, rows) {
+                var select_share = "SELECT list_id FROM lists where list_id=? and list_owner_user_id=?;";
+                    var query = connection.query(select_share, [list_id[2], data[0].user_id], function(err, rows) {
                         console.log(rows[0]);
                         if (rows[0]) {
-                          var shared_with =
-                            "INSERT INTO lists_assignments_to_users (list_id, user_id) VALUES (?, ?) ;";
-                          var query = connection.query(
-                            shared_with, [list_id[2], input.shared_with_user_id],
-                            function(err, rows) {
+                          var shared_with = "INSERT INTO lists_assignments_to_users (list_id, user_id) VALUES (?, ?) ;";
+                          var query = connection.query(shared_with, [list_id[2], input.shared_with_user_id], function(err, rows) {
                               if (err) {
                                 console.log(
                                   "NAAAAAAAAAAAAAAAAAAAAAAAAA!!!!! ERROR!!!!!!"
@@ -235,12 +220,8 @@ exports.update = function(req, res) {
                                 });
                               } else {
                                 //console.log(rows.insertId);
-                                var qstr =
-                                  "SELECT * FROM lists WHERE list_id = ?;";
-                                var query = connection.query(
-                                  qstr,
-                                  rows.insertId,
-                                  function(err, result) {
+                                var qstr = "SELECT * FROM lists WHERE list_id = ?;";
+                                var query = connection.query(qstr, rows.insertId, function(err, result) {
                                     if (err) {
                                       res.status(400).json({
                                         message: "Bad request."
@@ -260,7 +241,7 @@ exports.update = function(req, res) {
                           );
                         } else {
                           res.status(403).json({
-                            message: "Can't share this list with this user."
+                            message: "You can't update this list."
                           });
                         }
                       }
@@ -276,16 +257,17 @@ exports.update = function(req, res) {
             var list_id = originalUrl.split("/");
             console.log("Checkpoint before SQL.");
             var qstr =
-              "UPDATE lists SET list_title =? , list_description =? WHERE list_id = ?;";
+              "UPDATE lists SET ? WHERE list_id = ?;";
             console.log("Checkpoint after SQL.");
             var query = connection.query(
-              qstr, [input.list_title, input.list_description, list_id[2]],
+              qstr, [data_input, list_id[2]],
               function(err, rows) {
                 var remove_sql_task =
                   "UPDATE tasks SET task_is_active = ?, task_in_list = ? WHERE task_id = ?;";
                 var query = connection.query(
                   remove_sql_task, [0, , input.remove_task_id],
                   function(err, rows) {
+                    if (input.shared_with_user_id != null){
                     var shared_with =
                       "INSERT INTO lists_assignments_to_users (list_id, user_id) VALUES (?, ?);";
                     var query = connection.query(
@@ -312,7 +294,9 @@ exports.update = function(req, res) {
                                 });
                               } else {
                                 console.log("ALL DONE!!!! ^_^   ^_^   ^_^");
-                                res.status(200).json(result);
+                                res.status(200).json({
+                                  message: "List has been successfully updated"
+                                });
                               }
                             }
                           );
@@ -320,6 +304,12 @@ exports.update = function(req, res) {
                       }
                     );
                   }
+                  else {
+                    res.status(200).json({
+                      message: "List has been successfully updated"
+                    });
+                  }
+                }
                 );
               }
             );
@@ -331,5 +321,5 @@ exports.update = function(req, res) {
         message: "You must log in before you update lists."
       });
     }
-  }
 };
+
