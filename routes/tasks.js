@@ -50,6 +50,10 @@ exports.save = function(req, res) {
 
   var input = JSON.parse(JSON.stringify(req.body));
 
+  if (input.task_status == 'null' || typeof input.task_status === `undefined`) {
+    input.task_status = 'Not Started';
+  }
+  console.log(input.task_status)
   var data_input = {
     task_title: input.task_title,
     task_desc: input.task_desc,
@@ -58,19 +62,31 @@ exports.save = function(req, res) {
   };
 
   var validationError = false;
-  var t_statuses = ['Not Started', 'In Progress', 'Finished'];
+
+  if (typeof data_input.task_title !== `undefined` && data_input.task_title.length < 1 ){
+    validationError = true;
+    console.log(`111111111111111`);
+  }
+
+  if (typeof data_input.task_in_list !== `undefined` && data_input.task_title.length < 1 ){
+    validationError = true;
+    console.log(`222222222222222`);
+  }
+
   for (var key in data_input) {
     if (typeof data_input[key] === `undefined`){
       delete data_input[key];
     }
-    if (key === "task_status" ){
-      validationError = !t_statuses.includes(data_input[key])
-    }
   }
+
+  if (data_input.task_status !== 'Not Started' &&
+      data_input.task_status !== 'In Progress' &&
+      data_input.task_status !== 'Finished'){
+        validationError = true;
+        console.log(`3333333333333`);
+  }
+
   console.log(data_input)
-  if (input.task_title.length < 1 || input.task_in_list.length < 1) {
-    validationError = true;
-  }
 
   if (validationError) {
     res.status(409).json({
