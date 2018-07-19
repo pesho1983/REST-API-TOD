@@ -176,8 +176,15 @@ exports.update = function(req, res) {
   };
 
   for (var key in data_input) {
-    if (typeof data_input[key] === `undefined`){
+    if (typeof data_input[key] === `undefined`) {
       delete data_input[key];
+    }
+
+    if (input.list_title.length < 1) {
+      res.status(409).json({
+        message:
+          "Invalid data. Check the title of the list. It must be more than 1 symbol"
+      });
     }
   }
     if (userAuth) {
@@ -189,6 +196,14 @@ exports.update = function(req, res) {
           if (err) {
             res.status(400).json({
               message: "Bad request."
+            });
+          } else if (data[0].is_active == 0 && data[0].is_admin == 1){
+            res.status(400).json({
+              message: "You are inactive admin and you can't update anything."
+            });
+          } else if (data[0].is_active == 0 && data[0].is_admin == 0){
+            res.status(400).json({
+              message: "You are inactive user and you can't update anything."
             });
           } else if (data < 1) {
             res.status(404).json({
