@@ -150,14 +150,6 @@ exports.update = function(req, res) {
           res.status(400).json({
             message: "Bad request."
           });
-        } else if (data[0].is_active == 0 && data[0].is_admin == 1){
-          res.status(400).json({
-            message: "You are inactive admin and you can't update anything."
-          });
-        } else if (data[0].is_active == 0 && data[0].is_admin == 0){
-          res.status(400).json({
-            message: "You are inactive user and you can't update anything."
-          });
         } else if (data < 1) {
           res.status(404).json({
             message: "Wrong username or password."
