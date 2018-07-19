@@ -131,12 +131,14 @@ exports.update = function(req, res) {
       delete data_input[key];
     }
 
+    if (input.username !== undefined){
     if (input.username.length < 3 || input.username.length > 12) {
       res.status(409).json({
         message:
           "Invalid data. Check input data and have in mind that username must be between 3 and 12"
       });
     }
+  }
   }
 
   if (userAuth) {
