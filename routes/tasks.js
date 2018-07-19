@@ -63,27 +63,30 @@ exports.save = function(req, res) {
 
   var validationError = false;
 
-  if (typeof data_input.task_title !== `undefined` && data_input.task_title.length < 1 ){
-    validationError = true;
-    console.log(`111111111111111`);
+  if (typeof data_input.task_title !== `undefined`) {
+    if (data_input.task_title.length < 1) {
+      validationError = true;
+      console.log(`111111111111111`);
+    }
   }
 
-  if (typeof data_input.task_in_list !== `undefined` && data_input.task_title.length < 1 ){
-    validationError = true;
-    console.log(`222222222222222`);
+  if (typeof data_input.task_in_list !== `undefined`) {
+    if (data_input.task_in_list.length < 1) {
+      validationError = true;
+      console.log(`222222222222222`);
+    }
   }
-
   for (var key in data_input) {
-    if (typeof data_input[key] === `undefined`){
+    if (typeof data_input[key] === `undefined`) {
       delete data_input[key];
     }
   }
 
   if (data_input.task_status !== 'Not Started' &&
-      data_input.task_status !== 'In Progress' &&
-      data_input.task_status !== 'Finished'){
-        validationError = true;
-        console.log(`3333333333333`);
+    data_input.task_status !== 'In Progress' &&
+    data_input.task_status !== 'Finished') {
+    validationError = true;
+    console.log(`3333333333333`);
   }
 
   console.log(data_input)
@@ -113,7 +116,7 @@ exports.save = function(req, res) {
           } else {
             var qstr = "SELECT 1 FROM lists WHERE list_owner_user_id = ? AND list_id = ?;";
             var query = connection.query(qstr, [data[0].user_id, input.task_in_list], function(err, rows) {
-              if (rows.length === 1){
+              if (rows.length === 1) {
                 var qstr = "INSERT INTO tasks SET ?;"
                 var query2 = connection.query(qstr, data_input, function(err, rows) {
                   if (err) {
