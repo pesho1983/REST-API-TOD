@@ -180,12 +180,14 @@ exports.update = function(req, res) {
       delete data_input[key];
     }
 
+    if (input.list_title !== undefined){
     if (input.list_title.length < 1) {
       res.status(409).json({
         message:
           "Invalid data. Check the title of the list. It must be more than 1 symbol"
       });
     }
+  }
   }
     if (userAuth) {
       req.getConnection(function(err, connection) {
