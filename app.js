@@ -40,3 +40,4 @@ app.put('/lists/:list_id', lists.update);
 app.get('/tasks', tasks.list);
 app.post('/tasks', tasks.save);
 app.get('/list-all-lists', listAll.listAll);
+app.delete('/lists', deleteList.delete);
