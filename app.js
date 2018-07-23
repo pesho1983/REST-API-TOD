@@ -8,6 +8,8 @@ var lists = require('./routes/lists');
 var tasks = require('./routes/tasks');
 var listAll = require('./routes/list-all');
 var deleteList = require('./routes/deleteList');
+var taskInList = require('./routes/listTasksInList');
+var deleteTask = require('./routes/deleteTask');
 
 // app.use((req, res, next) => {
 //     res.status(200).json({
@@ -37,7 +39,9 @@ app.put('/users', users.update);
 app.get('/lists', lists.list);
 app.post('/lists', lists.save);
 app.put('/lists/:list_id', lists.update);
-app.get('/tasks', tasks.list);
+// app.get('/tasks', tasks.list);
 app.post('/tasks', tasks.save);
 app.get('/list-all-lists', listAll.listAll);
 app.delete('/lists', deleteList.delete);
+app.get('/tasks', taskInList.listTask);
+app.delete('/task', deleteTask.softDelete);
