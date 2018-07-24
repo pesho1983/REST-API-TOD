@@ -67,7 +67,7 @@ exports.listTask = function(req, res) {
               else{
                 var selectTasksQuery = `SELECT * FROM tasks WHERE task_in_list = ${selectData[0].list_id}`
                 if (!data[0].is_admin){
-                  selectTasksQuery += ` AND task_is_active = 0;`
+                  selectTasksQuery += ` AND task_is_active = 1;`
                 }
                 console.log(`selectTasksQuery: ${selectTasksQuery}`)
                 var query = connection.query(selectTasksQuery, function(err, selectedTasks){
