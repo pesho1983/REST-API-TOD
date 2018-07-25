@@ -178,7 +178,13 @@ exports.update = function(req, res) {
           "Invalid data. Check input data for task title. It must be at least 1 symbol"
       });
     }
-  }  
+  }
+  if (data_input.task_status !== 'Not Started' && data_input.task_status !== 'In Progress' &&
+    data_input.task_status !== 'Finished' && data_input.task_status !== undefined) {
+      res.status(405).json({
+        message:"Wrong input data. Task status must be Not Started, In Progress or Finished"
+        });
+    }  
   }
 
   if (userAuth) {
@@ -245,31 +251,26 @@ exports.update = function(req, res) {
                     else {
                       if (updTask[0] === undefined){
                         console.log("Task with ID:" + target_task_id + " is eighter not in a list or there is no such task in the Database");
-                        res.status(400).json({
+                        res.status(401).json({
                           message: "Task with ID:" + target_task_id + " is eighter not in a list or there is no such task in the Database"
                         });
-                      } else if (input.task_status === "Finished" || input.task_status === "Not Started" || input.task_status === "In Progress" || input.task_status === undefined) {
+                     } else if (input.task_status === "Finished" || input.task_status === "Not Started" || input.task_status === "In Progress" || input.task_status === undefined) {
                         console.log("ALL DONE!!!! ^_^   ^_^   ^_^");
                         res.status(200).json({
                           message: "Task with task_title: " + updTask[0].task_title + " ,task_description: " +  updTask[0].task_desc + " and task_status: " + updTask[0].task_status + " of list " + updTask[0].list_id + " is sucessfully updated."
                         });
-                        } else if (input.task_status !== "Finished" || input.task_status !== "Not Started" || input.task_status !== "In Progress" || input.task_status !== undefined) {
-                          console.log("Wrong input data. Task status must be Not Started, In Progress or Finished");
-                          res.status(200).json({
-                            message:"Wrong input data. Task status must be Not Started, In Progress or Finished"
-                          });
-                          } else {
+                     }
+                    else {
                         console.log("There is no task with such ID");
-                        res.status(200).json({
+                        res.status(403).json({
                         message:"There is no task with such ID"
                         });
                       }
                     }
                   });
                 }
-              }
-            );
-          }
+              });
+             }
           });
         } else if (!data[0].is_admin) {
           console.log(data_input);
@@ -314,7 +315,7 @@ exports.update = function(req, res) {
                     else {
                       if (updTask[0] === undefined){
                         console.log("Task with ID:" + target_task_id + " doesn't belong to this user");
-                        res.status(400).json({
+                        res.status(401).json({
                           message: "Task with ID:" + target_task_id + " doesn't belong to this user"
                         });
                       } else if (input.task_status === 'Finished' || input.task_status === 'Not Started' || input.task_status === 'In Progress' || input.task_status === undefined) {
@@ -322,14 +323,9 @@ exports.update = function(req, res) {
                         res.status(200).json({
                           message: "Task with task_title: " + updTask[0].task_title + " ,task_description: " +  updTask[0].task_desc + " and task_status: " + updTask[0].task_status + " of list " + updTask[0].list_id + " is sucessfully updated."
                         });
-                        } else if (input.task_status != "Finished" || input.task_status != "Not Started" || input.task_status != "In Progress" || input.task_status != undefined) {
-                          console.log("Wrong input data. Task status must be Not Started, In Progress or Finished");
-                          res.status(200).json({
-                            message:"Wrong input data. Task status must be Not Started, In Progress or Finished"
-                          });
-                          } else {
+                        } else {
                         console.log("There is no task with such ID");
-                        res.status(200).json({
+                        res.status(403).json({
                         message:"There is no task with such ID"
                         });
                       }
