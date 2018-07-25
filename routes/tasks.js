@@ -260,7 +260,7 @@ exports.update = function(req, res) {
                      }
                     else {
                         console.log("There is no task with such ID");
-                        res.status(200).json({
+                        res.status(404).json({
                         message:"There is no task with such ID"
                         });
                       }
@@ -320,7 +320,7 @@ exports.update = function(req, res) {
                         });
                         } else {
                         console.log("There is no task with such ID");
-                        res.status(200).json({
+                        res.status(404).json({
                         message:"There is no task with such ID"
                         });
                       }
