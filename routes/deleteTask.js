@@ -50,11 +50,10 @@ exports.softDelete = function(req, res) {
             }
             if (!data[0].is_admin) {
               selectQuery =
-                `SELECT t.task_id, t.task_title, l.list_id, l.list_title ` +
+                `SELECT t.task_id, t.task_title, l.list_id, l.list_title, latu.user_id ` +
                 `FROM tasks t ` +
                 `INNER JOIN lists l ON t.task_in_list = l.list_id ` +
                 `INNER JOIN lists_assignments_to_users latu ON latu.list_id = l.list_id ` +
-                `WHERE latu.user_id IS NULL ` +
                 `AND l.list_owner_user_id = ${data[0].user_id} ` +
                 `AND t.task_id = ${target_task_id};`
             }
@@ -69,22 +68,35 @@ exports.softDelete = function(req, res) {
                   message: `Task ${target_task_id} does not exist!`
                 });
               } else {
-                var updateQuery = `UPDATE tasks SET task_is_active = 0 WHERE task_id = ?;`
-                var query = connection.query(updateQuery, target_task_id, function(err, updateData) {
-                  if (err) {
-                    res.status(400).json({
-                      message: err
-                    });
-                  } else {
-                    var msg = `Task ${selectData[0].task_id} \'${selectData[0].task_title}\' in list ${selectData[0].list_id} \'${selectData[0].list_title}\' is successfully deleted.`;
-                    if (updateData.changedRows === 0) {
-                      msg = `Task ${target_task_id} was already deleted!`;
-                    }
-                    res.status(200).json({
-                      message: msg
-                    });
+                var isShared = false;
+                for (var i = 0; i < selectData.length; i++){
+                  if(selectData[i].user_id !== null){
+                    isShared = true
                   }
-                })
+                }
+                if (!data[0].is_admin && isShared){
+                  res.status(403).json({
+                    message: `Task ${target_task_id} is in a shared list.`
+                  });
+                }
+                else {
+                  var updateQuery = `UPDATE tasks SET task_is_active = 0 WHERE task_id = ?;`
+                  var query = connection.query(updateQuery, target_task_id, function(err, updateData) {
+                    if (err) {
+                      res.status(400).json({
+                        message: err
+                      });
+                    } else {
+                      var msg = `Task ${selectData[0].task_id} \'${selectData[0].task_title}\' in list ${selectData[0].list_id} \'${selectData[0].list_title}\' is successfully deleted.`;
+                      if (updateData.changedRows === 0) {
+                        msg = `Task ${target_task_id} was already deleted!`;
+                      }
+                      res.status(200).json({
+                        message: msg
+                      });
+                    }
+                  })
+                }
               }
             })
           }
