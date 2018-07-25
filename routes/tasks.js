@@ -181,7 +181,7 @@ exports.update = function(req, res) {
   }
   if (data_input.task_status !== 'Not Started' && data_input.task_status !== 'In Progress' &&
     data_input.task_status !== 'Finished' && data_input.task_status !== undefined) {
-      res.status(405).json({
+      res.status(400).json({
         message:"Wrong input data. Task status must be Not Started, In Progress or Finished"
         });
     }  
@@ -223,7 +223,6 @@ exports.update = function(req, res) {
               });
             }
             else {
-            //var oldTitle = updTitle[0].task_title;
             console.log("asdasdasdasdasdas");
             var qstr = "UPDATE tasks SET ? WHERE task_id = ?;";
               var query = connection.query(qstr, [data_input, target_task_id], function(err, rows) {
@@ -235,7 +234,6 @@ exports.update = function(req, res) {
                     message: err.sqlMessage
                   });
                 } else {
-                  //console.log(rows.insertId);
                   var qstr = `SELECT t.task_id, t.task_in_list, t.task_title, t.task_desc, t.task_status, l.list_id, l.list_owner_user_id ` +
                       `FROM tasks t ` +
                       `INNER JOIN lists l ON t.task_in_list = l.list_id ` +
@@ -251,7 +249,7 @@ exports.update = function(req, res) {
                     else {
                       if (updTask[0] === undefined){
                         console.log("Task with ID:" + target_task_id + " is eighter not in a list or there is no such task in the Database");
-                        res.status(401).json({
+                        res.status(400).json({
                           message: "Task with ID:" + target_task_id + " is eighter not in a list or there is no such task in the Database"
                         });
                      } else if (input.task_status === "Finished" || input.task_status === "Not Started" || input.task_status === "In Progress" || input.task_status === undefined) {
@@ -262,7 +260,7 @@ exports.update = function(req, res) {
                      }
                     else {
                         console.log("There is no task with such ID");
-                        res.status(403).json({
+                        res.status(200).json({
                         message:"There is no task with such ID"
                         });
                       }
@@ -287,8 +285,6 @@ exports.update = function(req, res) {
               });
             }
             else {
-            //var oldTitle = updTitle[0].task_title;
-            console.log("asdasdasdasdasdas");
             var qstr = "UPDATE tasks SET ? WHERE task_id = ?;";
               var query = connection.query(qstr, [data_input, target_task_id], function(err, rows) {
                 if (err) {
@@ -298,7 +294,6 @@ exports.update = function(req, res) {
                     message: err.sqlMessage
                   });
                 } else {
-                  //console.log(rows.insertId);
                   var qstr = `SELECT t.task_id, t.task_in_list, t.task_title, t.task_desc, t.task_status, l.list_id, l.list_owner_user_id ` +
                       `FROM tasks t ` +
                       `INNER JOIN lists l ON t.task_in_list = l.list_id ` +
@@ -315,7 +310,7 @@ exports.update = function(req, res) {
                     else {
                       if (updTask[0] === undefined){
                         console.log("Task with ID:" + target_task_id + " doesn't belong to this user");
-                        res.status(401).json({
+                        res.status(400).json({
                           message: "Task with ID:" + target_task_id + " doesn't belong to this user"
                         });
                       } else if (input.task_status === 'Finished' || input.task_status === 'Not Started' || input.task_status === 'In Progress' || input.task_status === undefined) {
@@ -325,7 +320,7 @@ exports.update = function(req, res) {
                         });
                         } else {
                         console.log("There is no task with such ID");
-                        res.status(403).json({
+                        res.status(200).json({
                         message:"There is no task with such ID"
                         });
                       }
@@ -336,13 +331,7 @@ exports.update = function(req, res) {
             );
           }
           });
-        } 
-          // else {            
-          //   console.log("User can update only his own tasks");
-          //   res.status(402).json({
-          //   message: "User can update only his own task information via localhost:[port]/tasks endpoint"
-          //   });
-          // }       
+        }      
       });
     });
   }
