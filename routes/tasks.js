@@ -178,7 +178,13 @@ exports.update = function(req, res) {
           "Invalid data. Check input data for task title. It must be at least 1 symbol"
       });
     }
-  }  
+  }
+  if (data_input.task_status !== 'Not Started' && data_input.task_status !== 'In Progress' &&
+    data_input.task_status !== 'Finished' && data_input.task_status !== undefined) {
+      res.status(400).json({
+        message:"Wrong input data. Task status must be Not Started, In Progress or Finished"
+        });
+    }  
   }
 
   if (userAuth) {
@@ -217,7 +223,6 @@ exports.update = function(req, res) {
               });
             }
             else {
-            //var oldTitle = updTitle[0].task_title;
             console.log("asdasdasdasdasdas");
             var qstr = "UPDATE tasks SET ? WHERE task_id = ?;";
               var query = connection.query(qstr, [data_input, target_task_id], function(err, rows) {
@@ -229,7 +234,6 @@ exports.update = function(req, res) {
                     message: err.sqlMessage
                   });
                 } else {
-                  //console.log(rows.insertId);
                   var qstr = `SELECT t.task_id, t.task_in_list, t.task_title, t.task_desc, t.task_status, l.list_id, l.list_owner_user_id ` +
                       `FROM tasks t ` +
                       `INNER JOIN lists l ON t.task_in_list = l.list_id ` +
@@ -248,28 +252,23 @@ exports.update = function(req, res) {
                         res.status(400).json({
                           message: "Task with ID:" + target_task_id + " is eighter not in a list or there is no such task in the Database"
                         });
-                      } else if (input.task_status === "Finished" || input.task_status === "Not Started" || input.task_status === "In Progress" || input.task_status === undefined) {
+                     } else if (input.task_status === "Finished" || input.task_status === "Not Started" || input.task_status === "In Progress" || input.task_status === undefined) {
                         console.log("ALL DONE!!!! ^_^   ^_^   ^_^");
                         res.status(200).json({
                           message: "Task with task_title: " + updTask[0].task_title + " ,task_description: " +  updTask[0].task_desc + " and task_status: " + updTask[0].task_status + " of list " + updTask[0].list_id + " is sucessfully updated."
                         });
-                        } else if (input.task_status !== "Finished" || input.task_status !== "Not Started" || input.task_status !== "In Progress" || input.task_status !== undefined) {
-                          console.log("Wrong input data. Task status must be Not Started, In Progress or Finished");
-                          res.status(200).json({
-                            message:"Wrong input data. Task status must be Not Started, In Progress or Finished"
-                          });
-                          } else {
+                     }
+                    else {
                         console.log("There is no task with such ID");
-                        res.status(200).json({
+                        res.status(404).json({
                         message:"There is no task with such ID"
                         });
                       }
                     }
                   });
                 }
-              }
-            );
-          }
+              });
+             }
           });
         } else if (!data[0].is_admin) {
           console.log(data_input);
@@ -286,8 +285,6 @@ exports.update = function(req, res) {
               });
             }
             else {
-            //var oldTitle = updTitle[0].task_title;
-            console.log("asdasdasdasdasdas");
             var qstr = "UPDATE tasks SET ? WHERE task_id = ?;";
               var query = connection.query(qstr, [data_input, target_task_id], function(err, rows) {
                 if (err) {
@@ -297,7 +294,6 @@ exports.update = function(req, res) {
                     message: err.sqlMessage
                   });
                 } else {
-                  //console.log(rows.insertId);
                   var qstr = `SELECT t.task_id, t.task_in_list, t.task_title, t.task_desc, t.task_status, l.list_id, l.list_owner_user_id ` +
                       `FROM tasks t ` +
                       `INNER JOIN lists l ON t.task_in_list = l.list_id ` +
@@ -322,14 +318,9 @@ exports.update = function(req, res) {
                         res.status(200).json({
                           message: "Task with task_title: " + updTask[0].task_title + " ,task_description: " +  updTask[0].task_desc + " and task_status: " + updTask[0].task_status + " of list " + updTask[0].list_id + " is sucessfully updated."
                         });
-                        } else if (input.task_status != "Finished" || input.task_status != "Not Started" || input.task_status != "In Progress" || input.task_status != undefined) {
-                          console.log("Wrong input data. Task status must be Not Started, In Progress or Finished");
-                          res.status(200).json({
-                            message:"Wrong input data. Task status must be Not Started, In Progress or Finished"
-                          });
-                          } else {
+                        } else {
                         console.log("There is no task with such ID");
-                        res.status(200).json({
+                        res.status(404).json({
                         message:"There is no task with such ID"
                         });
                       }
@@ -340,13 +331,7 @@ exports.update = function(req, res) {
             );
           }
           });
-        } 
-          // else {            
-          //   console.log("User can update only his own tasks");
-          //   res.status(402).json({
-          //   message: "User can update only his own task information via localhost:[port]/tasks endpoint"
-          //   });
-          // }       
+        }      
       });
     });
   }
