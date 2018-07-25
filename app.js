@@ -44,4 +44,5 @@ app.post('/tasks', tasks.save);
 app.get('/list-all-lists', listAll.listAll);
 app.delete('/lists', deleteList.delete);
 app.get('/tasks', taskInList.listTask);
+app.put('/tasks', tasks.update);
 app.delete('/tasks', deleteTask.softDelete);
