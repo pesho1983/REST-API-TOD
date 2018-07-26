@@ -173,7 +173,15 @@ exports.update = function(req, res) {
                 message: "Bad request. Endpoint must contain parameter for user_id"
               });
             } else {
-            var oldUsername = updUsr[0].username;
+            var oldUsername;
+            if (updUsr[0] === undefined) {
+              console.log("User with ID: " + user_id + " does not exist in the Database.");
+              res.status(400).json({
+                message: "User with ID: " + user_id + " does not exist in the Database."
+              });
+            }
+            else {
+            oldUsername = updUsr[0].username;
             var qstr = "UPDATE users SET ? WHERE user_id = ?;";
               var query = connection.query(qstr, [data_input, user_id], function(err, rows) {
                 if (err) {
@@ -197,8 +205,8 @@ exports.update = function(req, res) {
                     }
                   });
                 }
-              }
-            );
+              });
+            }
           }
           });
         } else if (!data[0].is_admin) {
