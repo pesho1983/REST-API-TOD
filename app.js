@@ -34,7 +34,7 @@ app.use(
 );
 
 
-app.get('/users', users.list);
+app.get('/users', users.getAllUsers);
 app.post('/users', users.save);
 app.put('/users', users.update);
 app.get('/lists', lists.list);

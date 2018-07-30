@@ -1,15 +1,3 @@
-exports.list = function(req, res) {
-
-  req.getConnection(function(err, connection) {
-    var query = connection.query('SELECT * FROM users', function(err, rows) {
-      if (err)
-        console.log("Error Selecting : %s ", err);
-        res.send(err);
-      res.send(rows);
-    });
-  });
-};
-
 exports.save = function(req, res) {
   var userAuth = false;
 
@@ -131,14 +119,13 @@ exports.update = function(req, res) {
       delete data_input[key];
     }
 
-    if (input.username !== undefined){
-    if (input.username.length < 3 || input.username.length > 12) {
-      res.status(409).json({
-        message:
-          "Invalid data. Check input data and have in mind that username must be between 3 and 12"
-      });
+    if (input.username !== undefined) {
+      if (input.username.length < 3 || input.username.length > 12) {
+        res.status(409).json({
+          message: "Invalid data. Check input data and have in mind that username must be between 3 and 12"
+        });
+      }
     }
-  }
   }
 
   if (userAuth) {
@@ -150,11 +137,11 @@ exports.update = function(req, res) {
           res.status(400).json({
             message: "Bad request."
           });
-        } else if (data[0].is_active == 0 && data[0].is_admin == 1){
+        } else if (data[0].is_active == 0 && data[0].is_admin == 1) {
           res.status(400).json({
             message: "You are inactive admin and you can't update anything."
           });
-        } else if (data[0].is_active == 0 && data[0].is_admin == 0){
+        } else if (data[0].is_active == 0 && data[0].is_admin == 0) {
           res.status(400).json({
             message: "You are inactive user and you can't update anything."
           });
@@ -173,80 +160,77 @@ exports.update = function(req, res) {
                 message: "Bad request. Endpoint must contain parameter for user_id"
               });
             } else {
-            var oldUsername;
-            if (updUsr[0] === undefined) {
-              console.log("User with ID: " + user_id + " does not exist in the Database.");
-              res.status(400).json({
-                message: "User with ID: " + user_id + " does not exist in the Database."
-              });
+              var oldUsername;
+              if (updUsr[0] === undefined) {
+                console.log("User with ID: " + user_id + " does not exist in the Database.");
+                res.status(400).json({
+                  message: "User with ID: " + user_id + " does not exist in the Database."
+                });
+              } else {
+                oldUsername = updUsr[0].username;
+                var qstr = "UPDATE users SET ? WHERE user_id = ?;";
+                var query = connection.query(qstr, [data_input, user_id], function(err, rows) {
+                  if (err) {
+                    console.log("NAAAAAAAAAAAAAAAAAAAAAAAAA!!!!! ERROR!!!!!!");
+                    console.log(err.code + "\n" + err.sqlMessage);
+                    res.status(400).json({
+                      message: err.sqlMessage
+                    });
+                  } else {
+                    //console.log(rows.insertId);
+                    var qstr = "SELECT * FROM users WHERE user_id = ?;";
+                    var query = connection.query(qstr, user_id, function(err, result) {
+                      if (err) {
+                        res.status(400).json({
+                          message: "Bad request."
+                        });
+                      } else {
+                        res.status(200).json({
+                          message: "Account with ID: " + user_id + " and username: " + oldUsername + " is updated sucessfully."
+                        });
+                      }
+                    });
+                  }
+                });
+              }
             }
-            else {
-            oldUsername = updUsr[0].username;
-            var qstr = "UPDATE users SET ? WHERE user_id = ?;";
-              var query = connection.query(qstr, [data_input, user_id], function(err, rows) {
-                if (err) {
-                  console.log("NAAAAAAAAAAAAAAAAAAAAAAAAA!!!!! ERROR!!!!!!");
-                  console.log(err.code + "\n" + err.sqlMessage);
-                  res.status(400).json({
-                    message: err.sqlMessage
-                  });
-                } else {
-                  //console.log(rows.insertId);
-                  var qstr = "SELECT * FROM users WHERE user_id = ?;";
-                  var query = connection.query(qstr, user_id, function(err, result) {
-                    if (err) {
-                      res.status(400).json({
-                        message: "Bad request."
-                      });
-                    } else {
-                      res.status(200).json({
-                        message:"Account with ID: " + user_id + " and username: " + oldUsername +" is updated sucessfully."
-                      });
-                    }
-                  });
-                }
-              });
-            }
-          }
           });
         } else if (!data[0].is_admin) {
           var user_id = req.query.user_id;
           if (user_id == undefined) {
             user_id = data[0].user_id;
             var qstr = "UPDATE users SET ? WHERE username = ?;";
-            var query = connection.query(qstr,[data_input, user], function(err, rows) {
-                if (err) {
-                  console.log("NAAAAAAAAAAAAAAAAAAAAAAAAA!!!!! ERROR!!!!!!");
-                  console.log(err.code + "\n" + err.sqlMessage);
-                  res.status(400).json({
-                    message: err.sqlMessage
-                  });
-                } else {
-                  //console.log(rows.insertId);
-                  var qstr = "SELECT * FROM users WHERE user_id = ?;";
-                  var query = connection.query(qstr, rows.insertId, function(
-                    err,
-                    result
-                  ) {
-                    if (err) {
-                      res.status(400).json({
-                        message: "Bad request."
-                      });
-                    } else {
-                      console.log("ALL DONE!!!! ^_^   ^_^   ^_^");
-                      res.status(200).json({
-                        message:"Account with ID: " + data[0].user_id + " and username: " + user + " is updated sucessfully."
-                      });
-                    }
-                  });
-                }
+            var query = connection.query(qstr, [data_input, user], function(err, rows) {
+              if (err) {
+                console.log("NAAAAAAAAAAAAAAAAAAAAAAAAA!!!!! ERROR!!!!!!");
+                console.log(err.code + "\n" + err.sqlMessage);
+                res.status(400).json({
+                  message: err.sqlMessage
+                });
+              } else {
+                //console.log(rows.insertId);
+                var qstr = "SELECT * FROM users WHERE user_id = ?;";
+                var query = connection.query(qstr, rows.insertId, function(
+                  err,
+                  result
+                ) {
+                  if (err) {
+                    res.status(400).json({
+                      message: "Bad request."
+                    });
+                  } else {
+                    console.log("ALL DONE!!!! ^_^   ^_^   ^_^");
+                    res.status(200).json({
+                      message: "Account with ID: " + data[0].user_id + " and username: " + user + " is updated sucessfully."
+                    });
+                  }
+                });
               }
-            );
+            });
           } else {
             console.log("No permissions to updata other users.");
             res.status(402).json({
-              message:
-                "User can update only his own user information via localhost:[port]/users endpoint"
+              message: "User can update only his own user information via localhost:[port]/users endpoint"
             });
           }
         }
@@ -256,6 +240,63 @@ exports.update = function(req, res) {
     console.log("Unauthorized users can't update user information");
     res.status(401).json({
       message: "Unauthorized users can't update user information"
+    });
+  }
+};
+
+exports.getAllUsers = function(req, res) {
+  var userAuth = false;
+
+  if (req.headers.authorization) {
+    var auth = req.headers.authorization.split(" ")[1];
+    var creds = Buffer.from(auth, "base64").toString("utf-8");
+    var user = creds.split(":")[0];
+    var pass = creds.split(":")[1];
+    userAuth = true;
+    console.log(`\nAuth header data: ${user} ${pass}\n`);
+  }
+  if (userAuth) {
+    req.getConnection(function(err, connection) {
+      var qstr = "SELECT * FROM users WHERE username = ? AND password = ?;";
+      var query = connection.query(qstr, [user, pass], function(err, data) {
+        if (err) {
+          res.status(400).json({
+            message: "Bad request."
+          });
+        } else if (data < 1) {
+          res.status(404).json({
+            message: "Wrong username or password."
+          });
+        } else if (!data[0].is_active) {
+          res.status(401).json({
+            message: "Account disabled."
+          });
+        } else if (!data[0].is_admin) {
+          // msg = "You don't have the rights to perform this action."
+          res.status(403).json({
+            message:"You have the rights to perform this action."
+          });
+        } else {
+          var selectData = "user_id, first_name, username, mail, password, is_active, is_admin";
+          qstr = "SELECT " + selectData + " FROM users LIMIT 50";
+          var query = connection.query(qstr, function(err, users) {
+            if (err) {
+              res.status(400).json({
+                message: "Bad request."
+              });
+            } else {
+              // res.status(200).json({
+              //   users
+              // });
+              res.send(users)
+            }
+          });
+        }
+      });
+    });
+  } else {
+    res.status(401).json({
+      message: "Authorization required."
     });
   }
 };
