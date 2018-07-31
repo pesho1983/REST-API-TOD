@@ -272,9 +272,9 @@ exports.getAllUsers = function(req, res) {
             message: "Account disabled."
           });
         } else if (!data[0].is_admin) {
-          // msg = "You don't have the rights to perform this action."
+          msg = "You don't have the rights to perform this action."
           res.status(403).json({
-            message:"You have the rights to perform this action."
+            message: msg
           });
         } else {
           var selectData = "user_id, first_name, username, mail, password, is_active, is_admin";
