@@ -80,7 +80,7 @@ exports.softDelete = function(req, res) {
                 });
               }
               else if (rows.changedRows === 0) {
-                res.status(200).json({
+                res.status(404).json({
                   message: 'No records changed.'
                 });
               } else {

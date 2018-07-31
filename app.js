@@ -12,6 +12,7 @@ var taskInList = require('./routes/listTasksInList');
 var deleteTask = require('./routes/deleteTask');
 var deleteUser = require('./routes/deleteUser');
 var searchUser = require('./routes/searchUser');
+var restoreList = require('./routes/restoreList');
 
 // app.use((req, res, next) => {
 //     res.status(200).json({
@@ -50,3 +51,4 @@ app.put('/tasks', tasks.update);
 app.delete('/tasks', deleteTask.softDelete);
 app.delete('/users', deleteUser.softDelete);
 app.get('/user-search', searchUser.search);
+app.put('/list-restore', restoreList.restore);
