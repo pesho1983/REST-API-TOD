@@ -60,6 +60,9 @@ exports.search = function(req, res) {
             });
           } else {
             var qstr2 = `SELECT username, first_name, surname, mail FROM users WHERE ${t_column} LIKE \'%${t_value}%\';`;
+            if (t_column == `user_id`){
+              qstr2 = `SELECT username, first_name, surname, mail FROM users WHERE ${t_column} = ${t_value}`;
+            }
             var query = connection.query(qstr2, function(err, result) {
               if (err) {
                 res.status(400).json({
