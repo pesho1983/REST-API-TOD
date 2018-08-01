@@ -75,7 +75,7 @@ exports.restore = function(req, res) {
                         });
                       } else {
                         var msg = "List " + listData[0].list_id + " \'" + listData[0].list_title + "\' and tasks are successfully restored."
-                        res.status(400).json({
+                        res.status(200).json({
                           message: msg
                         });
                       }
