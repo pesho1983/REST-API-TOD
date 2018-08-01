@@ -67,9 +67,18 @@ exports.restore = function(req, res) {
                       message: "Bad request."
                     });
                   } else {
-                    var msg = "List " + listData[0].list_id + " \'" + listData[0].list_title + "\' is successfully restored."
-                    res.status(400).json({
-                      message: msg
+                    var qstr4 = `UPDATE tasks SET task_is_active = 1 WHERE task_in_list = ${target_list_id}`;
+                    var query = connection.query(qstr4, function(err, result) {
+                      if (err) {
+                        res.status(400).json({
+                          message: "Bad request."
+                        });
+                      } else {
+                        var msg = "List " + listData[0].list_id + " \'" + listData[0].list_title + "\' and tasks are successfully restored."
+                        res.status(400).json({
+                          message: msg
+                        });
+                      }
                     });
                   }
                 });
