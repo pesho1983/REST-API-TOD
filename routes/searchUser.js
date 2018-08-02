@@ -24,7 +24,7 @@ exports.search = function(req, res) {
       break;
     case 'username':
     case 'first_name':
-    case 'username':
+    case 'surname':
     case 'mail':
       if (t_value.length < 3) {
         validationError = true;
