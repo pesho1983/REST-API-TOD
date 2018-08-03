@@ -1,0 +1,60 @@
+{
+  "id": "907c29fe-0272-46c6-95de-700e9316072c",
+  "name": "New lists for delete list test exectuion",
+  "values": [
+    {
+      "value": "567",
+      "key": "deleteListID",
+      "enabled": true
+    },
+    {
+      "value": "227",
+      "key": "deleteListID2",
+      "enabled": true
+    },
+    {
+      "value": "229",
+      "key": "deleteListID3",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "4268",
+      "key": "deleteUserByID",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "4523",
+      "key": "deleteAdminByID",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "localhost:3000",
+      "key": "url",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "",
+      "key": "temp",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2018-08-03T10:37:37.111Z",
+  "_postman_exported_using": "Postman/6.2.3"
+}
